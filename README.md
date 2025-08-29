@@ -247,8 +247,20 @@ MIT License
 - 🎯 基础仓位管理功能
 - 🏦 DEFI操作记录功能
 - 🎁 空投参与追踪功能
+- 
+
 - 📊 仓位占比饼状图
 
 ---
 
 **注意**: 这是一个个人使用的工具，请根据实际需求调整配置和功能。投资有风险，请谨慎决策。
+
+
+## 项目截图
+<img width="1314" height="2120" alt="779404699e846ce4ea4e957893a3f300" src="https://github.com/user-attachments/assets/6d8ca33d-13ba-4411-b21f-d67daf2800f4" />
+
+<img width="1316" height="2131" alt="03c3892d4b141b920ac48f8ea299babf" src="https://github.com/user-attachments/assets/ff783f20-13d4-49e9-9790-319a63a0fc0f" />
+
+<img width="1316" height="1421" alt="ef1c8267571da3b2afc5360e4393c121" src="https://github.com/user-attachments/assets/0d4f0b6f-6b3d-40ea-888c-5e31ec092a8d" />
+
+
