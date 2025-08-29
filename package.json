@@ -1,0 +1,37 @@
+{
+  "name": "blockchain-trading-log",
+  "version": "1.0.0",
+  "description": "个人区块链操作日志记录本",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "server": "node backend/server.js",
+    "debug": "node backend/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "token-service": "node start_token_service.js",
+    "fix-db": "node fix_database_issue.js"
+  },
+  "keywords": [
+    "blockchain",
+    "trading",
+    "log",
+    "defi",
+    "airdrop"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "body-parser": "^1.20.2",
+    "bootstrap-icons": "^1.13.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mysql2": "^3.6.0",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

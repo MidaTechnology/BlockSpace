@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>链迹空间</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- 宇宙背景元素 -->
+    <div class="cosmic-elements">
+        <div class="moon"></div>
+        <div class="asteroid-belt"></div>
+        <div class="saturn-rings"></div>
+        <div class="floating-planet"></div>
+        <div class="cosmic-dust"></div>
+    </div>
+    
+    <div class="container">
+        <!-- 头部导航 -->
+        <header class="header">
+            <h1>链迹空间</h1>
+            <p class="product-description">一站式区块链操作记录工具，支持买卖、仓位、DeFi、空投等多维度追踪，让你的链上足迹清晰可见。</p>
+            <nav class="nav">
+                <button class="nav-btn active" data-tab="position">仓位展示</button>
+                <button class="nav-btn" data-tab="defi">DEFI</button>
+                <button class="nav-btn" data-tab="airdrop">空投参与</button>
+            </nav>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 仓位展示板块 -->
+            <section id="position" class="tab-content active">
+                <div class="section-header">
+                    <h2>仓位展示</h2>
+                    <div class="button-group">
+                        <button class="add-btn" onclick="showPositionForm()">添加操作记录</button>
+                        <button class="import-btn" onclick="showImportModal()">导入交易所数据</button>
+                    </div>
+                </div>
+                
+                            <!-- 仓位汇总 -->
+            <div class="summary-section">
+                <h3>仓位汇总</h3>
+                <div class="price-update-info">
+                    <span>价格更新时间: <span id="lastPriceUpdate">未更新</span></span>
+                    <span>下次更新: <span id="nextPriceUpdate">--</span></span>
+                </div>
+                <!-- 仓位概览信息 -->
+                <div class="position-overview">
+                    <div class="overview-item">
+                        <div class="overview-icon">💰</div>
+                        <div class="overview-content">
+                            <div class="overview-label">总仓位价值</div>
+                            <div class="overview-value" id="totalPortfolioValue">--</div>
+                        </div>
+                    </div>
+                    <div class="overview-item">
+                        <div class="overview-icon">🪙</div>
+                        <div class="overview-content">
+                            <div class="overview-label">持仓Token种类</div>
+                            <div class="overview-value" id="tokenCount">--</div>
+                        </div>
+                    </div>
+                    <div class="overview-item">
+                        <div class="overview-icon">🏥</div>
+                        <div class="overview-content">
+                            <div class="overview-label">仓位健康值</div>
+                            <div class="overview-value" id="portfolioHealth">--</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="positionChart"></canvas>
+                </div>
+                
+                <div class="position-table-container">
+                    <table id="positionTable" class="position-table">
+                        <thead>
+                            <tr>
+                                <th>Token</th>
+                                <th>数量</th>
+                                <th>成本均价</th>
+                                <th>当前价格</th>
+                                <th>当前价值</th>
+                                <th class="sortable" data-sort="portfolio_percentage">
+                                    仓位占比
+                                    <button class="sort-btn" onclick="sortTable('portfolio_percentage')">
+                                        <i class="bi bi-arrow-down-up"></i>
+                                    </button>
+                                </th>
+                                <th class="sortable" data-sort="price_change_24h">
+                                    24h涨跌幅
+                                    <button class="sort-btn" onclick="sortTable('price_change_24h')">
+                                        <i class="bi bi-arrow-down-up"></i>
+                                    </button>
+                                </th>
+                                <th class="sortable" data-sort="profit_loss">
+                                    盈利金额
+                                    <button class="sort-btn" onclick="sortTable('profit_loss')">
+                                        <i class="bi bi-arrow-down-up"></i>
+                                    </button>
+                                </th>
+                                <th class="sortable" data-sort="profit_loss_percentage">
+                                    盈利百分比
+                                    <button class="sort-btn" onclick="sortTable('profit_loss_percentage')">
+                                        <i class="bi bi-arrow-down-up"></i>
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="positionTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+                <!-- 操作记录列表 -->
+                <div class="records-section">
+                    <h3>操作记录</h3>
+                    <div class="records-table-container">
+                        <table id="positionRecordsTable" class="records-table">
+                            <thead>
+                                <tr>
+                                    <th>操作类型</th>
+                                    <th>Token</th>
+                                    <th>数量</th>
+                                    <th>单价</th>
+                                    <th>总金额</th>
+                                    <th>操作原因</th>
+                                    <th>操作时间</th>
+                                    <th>评分</th>
+                                    <th>复盘信息</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="positionRecordsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+                        <!-- DEFI板块 -->
+            <section id="defi" class="tab-content">
+                <div class="section-header">
+                    <h2>DEFI操作</h2>
+                    <div class="button-group">
+                        <button class="add-btn" onclick="showDefiForm()">添加DEFI记录</button>
+                    </div>
+                </div>
+                
+                <!-- DEFI汇总 -->
+                <div class="summary-section">
+                    <h3>DEFI汇总</h3>
+                    <div class="defi-overview">
+                        <div class="overview-item">
+                            <div class="overview-icon">💰</div>
+                            <div class="overview-content">
+                                <div class="overview-label">总价值 (USDT)</div>
+                                <div class="overview-value" id="totalValue">--</div>
+                            </div>
+                        </div>
+                        <div class="overview-item">
+                            <div class="overview-icon">📈</div>
+                            <div class="overview-content">
+                                <div class="overview-label">每日收益 (USDT)</div>
+                                <div class="overview-value" id="dailyEarnings">--</div>
+                            </div>
+                        </div>
+                        <div class="overview-item">
+                            <div class="overview-icon">🏦</div>
+                            <div class="overview-content">
+                                <div class="overview-label">平均年化利率</div>
+                                <div class="overview-value" id="avgApy">--</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- DEFI项目价值分布饼状图 -->
+                    <div class="chart-container">
+                        <canvas id="defiChart"></canvas>
+                    </div>
+                    
+                    <table id="defiSummaryTable" class="defi-summary-table">
+                        <thead>
+                            <tr>
+                                <th>项目</th>
+                                <th>Token</th>
+                                <th>数量</th>
+                                <th class="sortable" data-sort="usdt_value">
+                                    价值USDT
+                                    <button class="sort-btn" onclick="sortDefiTable('usdt_value')">
+                                        <i class="bi bi-arrow-down-up"></i>
+                                    </button>
+                                </th>
+                                <th class="sortable" data-sort="apr">
+                                    APR
+                                    <button class="sort-btn" onclick="sortDefiTable('apr')">
+                                        <i class="bi bi-arrow-down-up"></i>
+                                    </button>
+                                </th>
+                                <th class="sortable" data-sort="daily_earnings">
+                                    每日收益
+                                    <button class="sort-btn" onclick="sortDefiTable('daily_earnings')">
+                                        <i class="bi bi-arrow-down-up"></i>
+                                    </button>
+                                </th>
+                                <th class="sortable" data-sort="exit_time">
+                                    退出时间
+                                    <button class="sort-btn" onclick="sortDefiTable('exit_time')">
+                                        <i class="bi bi-arrow-down-up"></i>
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="defiSummaryTableBody">
+                        </tbody>
+                    </table>
+                    <div class="table-note">
+                        <small>注：数量 = 净质押数量 - 净借款数量（借款为负值） | 价值USDT = 数量 × Token当前价格</small>
+                    </div>
+                </div>
+                
+                <!-- DEFI操作记录 -->
+                <div class="records-section">
+                    <h3>DEFI操作记录</h3>
+                    <table id="defiRecordsTable" class="defi-records-table">
+                        <thead>
+                            <tr>
+                                <th>项目</th>
+                                <th>操作类型</th>
+                                <th>Token</th>
+                                <th>数量</th>
+                                <th>APR</th>
+                                <th>退出时间</th>
+                                <th>操作日期</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="defiRecordsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 空投参与板块 -->
+            <section id="airdrop" class="tab-content">
+                <div class="section-header">
+                    <h2>空投参与</h2>
+                    <button class="add-btn" onclick="showAirdropForm()">添加空投记录</button>
+                </div>
+                
+                <!-- 空投汇总 -->
+                <div class="summary-section">
+                    <h3>空投汇总</h3>
+                    <div id="airdropSummary" class="summary-grid"></div>
+                </div>
+
+                <!-- 空投记录列表 -->
+                <div class="records-section">
+                    <h3>空投记录</h3>
+                    <div class="airdrop-table-container">
+                        <table id="airdropTable" class="airdrop-table">
+                            <thead>
+                                <tr>
+                                    <th>项目信息</th>
+                                    <th>参与类型</th>
+                                    <th>参与金额</th>
+                                    <th>参与日期</th>
+                                    <th>预期空投日期</th>
+                                    <th>实际奖励</th>
+                                    <th>实际APR</th>
+                                    <th>状态</th>
+                                    <th>备注</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="airdropTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 仓位操作表单模态框 -->
+    <div id="positionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePositionModal()">&times;</span>
+            <h3>添加仓位操作</h3>
+            <form id="positionForm">
+                <div class="form-group">
+                    <label for="operationType">操作类型:</label>
+                    <select id="operationType" required>
+                        <option value="买入">买入</option>
+                        <option value="卖出">卖出</option>
+                        <option value="初始仓位">初始仓位</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tokenName">Token名称:</label>
+                    <input type="text" id="tokenName" placeholder="如: BTC" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">数量:</label>
+                    <input type="number" id="quantity" step="0.00000001" placeholder="如: 0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="price">价格 (USDT):</label>
+                    <input type="number" id="price" step="0.01" placeholder="如: 110000" required>
+                </div>
+                <div class="form-group">
+                    <label for="reason">操作原因:</label>
+                    <textarea id="reason" placeholder="如: 持续看好后市（可选）"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">提交</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 仓位操作编辑模态框 -->
+    <div id="positionEditModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePositionEditModal()">&times;</span>
+            <h3>编辑仓位操作</h3>
+            <form id="positionEditForm">
+                <input type="hidden" id="editRecordId">
+                <div class="form-group">
+                    <label for="editOperationType">操作类型:</label>
+                    <select id="editOperationType" required>
+                        <option value="买入">买入</option>
+                        <option value="卖出">卖出</option>
+                        <option value="初始仓位">初始仓位</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editTokenName">Token名称:</label>
+                    <input type="text" id="editTokenName" placeholder="如: BTC" required>
+                </div>
+                <div class="form-group">
+                    <label for="editQuantity">数量:</label>
+                    <input type="number" id="editQuantity" step="0.00000001" placeholder="如: 0.1" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPrice">价格 (USDT):</label>
+                    <input type="number" id="editPrice" step="0.01" placeholder="如: 110000" required>
+                </div>
+                <div class="form-group">
+                    <label for="editReason">操作原因:</label>
+                    <textarea id="editReason" placeholder="如: 持续看好后市（可选）"></textarea>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="submit-btn">保存修改</button>
+                    <button type="button" class="cancel-btn" onclick="closePositionEditModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 交易所数据导入模态框 -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeImportModal()">&times;</span>
+            <h3>导入交易所数据</h3>
+            <div class="import-info">
+                <p>通过配置交易所API，自动导入您的交易历史和持仓数据</p>
+            </div>
+            <form id="importForm">
+                <div class="form-group">
+                    <label for="exchangeName">交易所:</label>
+                    <select id="exchangeName" required>
+                        <option value="">请选择交易所</option>
+                        <option value="binance">Binance</option>
+                        <option value="okex">OKEx</option>
+                        <option value="coinbase">Coinbase</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="apiKey">API Key:</label>
+                    <input type="text" id="apiKey" placeholder="请输入您的API Key" required>
+                </div>
+                <div class="form-group">
+                    <label for="apiSecret">API Secret:</label>
+                    <input type="password" id="apiSecret" placeholder="请输入您的API Secret" required>
+                </div>
+                <div class="form-group">
+                    <label for="importOptions">导入选项:</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="importHistory" checked>
+                            <span>导入交易历史</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="importPositions" checked>
+                            <span>导入当前持仓</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="importBalances" checked>
+                            <span>导入账户余额</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="submit-btn">开始导入</button>
+                    <button type="button" class="cancel-btn" onclick="closeImportModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DEFI操作表单模态框 -->
+    <div id="defiModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDefiModal()">&times;</span>
+            <h3>添加DEFI操作</h3>
+            <form id="defiForm">
+                <div class="form-group">
+                    <label for="defiProject">项目名称:</label>
+                    <input type="text" id="defiProject" placeholder="如: Uniswap" required>
+                </div>
+                <div class="form-group">
+                    <label for="defiProjectUrl">项目链接:</label>
+                    <input type="url" id="defiProjectUrl" placeholder="如: https://uniswap.org">
+                </div>
+                <div class="form-group">
+                    <label for="defiOperationType">操作类型:</label>
+                    <select id="defiOperationType" required>
+                        <option value="质押">质押</option>
+                        <option value="赎回">赎回</option>
+                        <option value="添加LP">添加LP</option>
+                        <option value="撤出LP">撤出LP</option>
+                        <option value="借款">借款</option>
+                        <option value="还款">还款</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="defiToken">Token:</label>
+                    <input type="text" id="defiToken" placeholder="如: ETH" required>
+                </div>
+                <div class="form-group">
+                    <label for="defiQuantity">数量:</label>
+                    <input type="number" id="defiQuantity" step="0.01" placeholder="如: 1.50" required>
+                </div>
+                <div class="form-group">
+                    <label for="defiApy">年化收益率 (%):</label>
+                    <input type="number" id="defiApy" step="0.01" placeholder="如: 12.50">
+                </div>
+                <div class="form-group">
+                    <label for="defiExitTime">退出等待时间:</label>
+                    <input type="text" id="defiExitTime" placeholder="如: 7天, 30天, 无锁定期">
+                </div>
+                <div class="form-group">
+                    <label for="defiNotes">备注:</label>
+                    <textarea id="defiNotes" placeholder="如: 长期质押策略"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">提交</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 空投参与表单模态框 -->
+    <div id="airdropModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAirdropModal()">&times;</span>
+            <h3>添加空投参与</h3>
+            <form id="airdropForm">
+                <div class="form-group">
+                    <label for="airdropProject">项目名称:</label>
+                    <input type="text" id="airdropProject" placeholder="如: Arbitrum" required>
+                </div>
+                <div class="form-group">
+                    <label for="airdropProjectUrl">项目网址:</label>
+                    <input type="url" id="airdropProjectUrl" placeholder="如: https://arbitrum.io">
+                </div>
+                <div class="form-group">
+                    <label for="airdropProjectTwitter">项目方推特:</label>
+                    <input type="text" id="airdropProjectTwitter" placeholder="如: @arbitrum">
+                </div>
+                <div class="form-group">
+                    <label for="airdropParticipationType">参与类型:</label>
+                    <select id="airdropParticipationType" required>
+                        <option value="交互">交互</option>
+                        <option value="存款">存款</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="airdropWalletAddress">参与钱包地址:</label>
+                    <input type="text" id="airdropWalletAddress" placeholder="如: 0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6" required>
+                </div>
+                <div class="form-group">
+                    <label for="airdropParticipationAmount">参与金额:</label>
+                    <input type="number" id="airdropParticipationAmount" step="0.00000001" placeholder="如: 1000" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="airdropParticipationToken">参与Token:</label>
+                    <input type="text" id="airdropParticipationToken" placeholder="如: ETH, SOL, USDT">
+                </div>
+                <div class="form-group">
+                    <label for="airdropParticipationAmountUsdt">参与金额USDT价值:</label>
+                    <input type="number" id="airdropParticipationAmountUsdt" step="0.01" min="0" placeholder="如: 2500" value="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="airdropDate">参与日期:</label>
+                    <input type="date" id="airdropDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="airdropExpectedDate">预期空投日期:</label>
+                    <input type="date" id="airdropExpectedDate">
+                </div>
+                <div class="form-group">
+                    <label for="airdropExpectedReward">预期奖励:</label>
+                    <input type="number" id="airdropExpectedReward" step="0.00000001" placeholder="如: 1000">
+                </div>
+                <div class="form-group">
+                    <label for="airdropActualReward">实际奖励:</label>
+                    <input type="number" id="airdropActualReward" step="0.00000001" placeholder="如: 950">
+                </div>
+                <div class="form-group">
+                    <label for="airdropActualApr">实际APR:</label>
+                    <input type="number" id="airdropActualApr" step="0.01" placeholder="如: 12.5">
+                </div>
+                <div class="form-group">
+                    <label for="airdropStatus">状态:</label>
+                    <select id="airdropStatus" required>
+                        <option value="进行中">进行中</option>
+                        <option value="已空投">已空投</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="airdropWithdrawalStatus">提款状态:</label>
+                    <select id="airdropWithdrawalStatus" required>
+                        <option value="未提款">未提款</option>
+                        <option value="已提款">已提款</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="airdropNotes">备注:</label>
+                    <textarea id="airdropNotes" placeholder="如: 等待官方确认"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">提交</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 空投记录编辑模态框 -->
+    <div id="airdropEditModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAirdropEditModal()">&times;</span>
+            <h3>编辑空投记录</h3>
+            <form id="airdropEditForm">
+                <input type="hidden" id="editAirdropId">
+                <div class="form-group">
+                    <label for="editAirdropProject">项目名称:</label>
+                    <input type="text" id="editAirdropProject" placeholder="如: Arbitrum" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAirdropProjectUrl">项目网址:</label>
+                    <input type="url" id="editAirdropProjectUrl" placeholder="如: https://arbitrum.io">
+                </div>
+                <div class="form-group">
+                    <label for="editAirdropProjectTwitter">项目方推特:</label>
+                    <input type="text" id="editAirdropProjectTwitter" placeholder="如: @arbitrum">
+                </div>
+                <div class="form-group">
+                    <label for="editAirdropParticipationType">参与类型:</label>
+                    <select id="editAirdropParticipationType" required>
+                        <option value="交互">交互</option>
+                        <option value="存款">存款</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editAirdropWalletAddress">参与钱包地址:</label>
+                    <input type="text" id="editAirdropWalletAddress" placeholder="如: 0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAirdropParticipationAmount">参与金额:</label>
+                    <input type="number" id="editAirdropParticipationAmount" step="0.00000001" placeholder="如: 1000" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="editAirdropParticipationToken">参与Token:</label>
+                    <input type="text" id="editAirdropParticipationToken" placeholder="如: ETH, SOL, USDT">
+                </div>
+                <div class="form-group">
+                    <label for="editAirdropParticipationAmountUsdt">参与金额USDT价值:</label>
+                    <input type="number" id="editAirdropParticipationAmountUsdt" step="0.01" min="0" placeholder="如: 2500" value="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAirdropDate">参与日期:</label>
+                    <input type="date" id="editAirdropDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAirdropExpectedDate">预期空投日期:</label>
+                    <input type="date" id="editAirdropExpectedDate">
+                </div>
+                <div class="form-group">
+                    <label for="editAirdropExpectedReward">预期奖励:</label>
+                    <input type="number" id="editAirdropExpectedReward" step="0.00000001" placeholder="如: 1000">
+                </div>
+                <div class="form-group">
+                    <label for="editAirdropActualReward">实际奖励:</label>
+                    <input type="number" id="editAirdropActualReward" step="0.00000001" placeholder="如: 950">
+                </div>
+                <div class="form-group">
+                    <label for="editAirdropActualApr">实际APR:</label>
+                    <input type="number" id="editAirdropActualApr" step="0.01" placeholder="如: 12.5">
+                </div>
+                <div class="form-group">
+                    <label for="editAirdropStatus">状态:</label>
+                    <select id="editAirdropStatus" required>
+                        <option value="进行中">进行中</option>
+                        <option value="已空投">已空投</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editAirdropWithdrawalStatus">提款状态:</label>
+                    <select id="editAirdropWithdrawalStatus" required>
+                        <option value="未提款">未提款</option>
+                        <option value="已提款">已提款</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editAirdropNotes">备注:</label>
+                    <textarea id="editAirdropNotes" placeholder="如: 等待官方确认"></textarea>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="submit-btn">保存修改</button>
+                    <button type="button" class="cancel-btn" onclick="closeAirdropEditModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 操作记录打分模态框 -->
+    <div id="scoreModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeScoreModal()">&times;</span>
+            <h3>操作记录打分</h3>
+            <form id="scoreForm">
+                <input type="hidden" id="scoreRecordId">
+                <div class="form-group">
+                    <label for="operationInfo">操作信息:</label>
+                    <div id="operationInfo" class="operation-info-display"></div>
+                </div>
+                <div class="form-group">
+                    <label for="score">操作评分:</label>
+                    <div class="score-input-container">
+                        <input type="range" id="score" min="0" max="100" value="50" class="score-slider">
+                        <span id="scoreValue" class="score-value">50</span>
+                        <span class="score-label">分</span>
+                    </div>
+                    <div class="score-description">
+                        <span class="score-range">0-30: 操作失误</span>
+                        <span class="score-range">31-60: 操作一般</span>
+                        <span class="score-range">61-80: 操作良好</span>
+                        <span class="score-range">81-100: 操作优秀</span>
+                        </div>
+                </div>
+                <div class="form-group">
+                    <label for="review">复盘感受和经验总结:</label>
+                    <textarea id="review" placeholder="请详细描述此次操作的复盘感受，总结经验教训，为后续操作提供参考..." rows="6" required></textarea>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="submit-btn">保存评分</button>
+                    <button type="button" class="cancel-btn" onclick="closeScoreModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
