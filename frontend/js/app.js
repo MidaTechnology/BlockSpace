@@ -1878,7 +1878,7 @@ async function autoUpdatePrices() {
         console.log('🔍 获取到的后端Token价格数据:', priceMap);
         
         // 使用后端价格更新显示
-        showNotification(`✅ 价格更新成功！获取到 ${validPrices.length} 个Token的最新价格`, 'success');
+        showNotification(`已更新 ${validPrices.length} 个Token的最新价格`, 'success');
         updatePriceUpdateTime();
         
         // 更新前端显示，使用最新价格
