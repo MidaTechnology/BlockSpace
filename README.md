@@ -1,4 +1,4 @@
-# 区块链操作日志记录本
+# 链迹空间
 
 一个个人区块链操作日志记录系统，帮助用户追踪和管理自己的区块链投资、DEFI操作和空投参与情况。
 
@@ -58,7 +58,7 @@
 1. **克隆项目**
 ```bash
 git clone <repository-url>
-cd hackathon
+cd BlockSpace
 ```
 
 2. **安装依赖**
